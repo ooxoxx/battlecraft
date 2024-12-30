@@ -1,4 +1,5 @@
 import { Graffle } from 'graffle'
+import { Throws } from 'graffle/extensions/throws'
 import { parse } from 'graphql'
 
 interface Result {
@@ -33,10 +34,11 @@ async function getToken(clientId: string, clientSecret: string) {
 }
 
 export default defineEventHandler(async (event) => {
+  console.log('/api/wcl entered')
   const { wcl: { clientId, clientSecret, host } } = useRuntimeConfig(event)
   const token = await getToken(clientId, clientSecret)
 
-  console.log(token)
+  console.log(`here is the token: ${token}`)
   const client = Graffle
     .create()
     .transport({
@@ -45,6 +47,7 @@ export default defineEventHandler(async (event) => {
         authorization: `Bearer ${token}`,
       },
     })
+    .use(Throws())
 
   const data = await client.gql(parse(`
     query characterRanking($id: Int = 12660) {
@@ -55,8 +58,7 @@ export default defineEventHandler(async (event) => {
       }
     }
   `)).send({ id: 12660 })
-
-  console.log(data)
+  console.log(`here is the data: ${data}`)
 
   return { data }
 })
