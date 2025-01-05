@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
-    "\nquery characterRanking($id: Int = 12660, $className: String!, $specName: String!) {\n  worldData {\n    encounter(id: $id) {\n      name\n      characterRankings(page:1, className: $className, specName: $specName, metric: playerscore, leaderboard: LogsOnly,)\n    }\n  }\n}": types.CharacterRankingDocument,
+    "\n  query characterRanking(\n    $id: Int = 12660\n    $className: String!\n    $specName: String!\n  ) {\n    worldData {\n      encounter(id: $id) {\n        name\n        characterRankings(\n          page: 1\n          className: $className\n          specName: $specName\n          metric: playerscore\n          leaderboard: LogsOnly\n        )\n      }\n    }\n  }\n": types.CharacterRankingDocument,
 };
 
 /**
@@ -34,7 +34,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery characterRanking($id: Int = 12660, $className: String!, $specName: String!) {\n  worldData {\n    encounter(id: $id) {\n      name\n      characterRankings(page:1, className: $className, specName: $specName, metric: playerscore, leaderboard: LogsOnly,)\n    }\n  }\n}"): (typeof documents)["\nquery characterRanking($id: Int = 12660, $className: String!, $specName: String!) {\n  worldData {\n    encounter(id: $id) {\n      name\n      characterRankings(page:1, className: $className, specName: $specName, metric: playerscore, leaderboard: LogsOnly,)\n    }\n  }\n}"];
+export function gql(source: "\n  query characterRanking(\n    $id: Int = 12660\n    $className: String!\n    $specName: String!\n  ) {\n    worldData {\n      encounter(id: $id) {\n        name\n        characterRankings(\n          page: 1\n          className: $className\n          specName: $specName\n          metric: playerscore\n          leaderboard: LogsOnly\n        )\n      }\n    }\n  }\n"): (typeof documents)["\n  query characterRanking(\n    $id: Int = 12660\n    $className: String!\n    $specName: String!\n  ) {\n    worldData {\n      encounter(id: $id) {\n        name\n        characterRankings(\n          page: 1\n          className: $className\n          specName: $specName\n          metric: playerscore\n          leaderboard: LogsOnly\n        )\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

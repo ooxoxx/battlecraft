@@ -1,4 +1,6 @@
+import process from 'node:process'
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core'
+import 'dotenv/config'
 
 interface Result {
   token_type: string
@@ -37,7 +39,7 @@ interface WclConfig {
   host: string
 }
 
-export function getClient({ clientId, clientSecret, host }: WclConfig) {
+export async function useClient({ clientId, clientSecret, host }: WclConfig) {
   return getToken(clientId, clientSecret).then(token =>
     new ApolloClient({
       link: new HttpLink({
@@ -50,3 +52,14 @@ export function getClient({ clientId, clientSecret, host }: WclConfig) {
     }),
   )
 }
+
+export async function useClientWithEnv() {
+  const wclConfig = {
+    clientId: process.env.NUXT_WCL_CLIENT_ID ?? '',
+    clientSecret: process.env.NUXT_WCL_CLIENT_SECRET ?? '',
+    host: process.env.NUXT_WCL_HOST ?? '',
+  }
+  return await useClient(wclConfig)
+}
+
+export const client = await useClientWithEnv()
