@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`finds stats by report 1`] = `
+{
+  "class": "Paladin",
+  "name": "丶将息",
+  "rank": -1,
+  "spec": "Protection",
+  "stats": {
+    "armor": 122616,
+    "avoidance": 0,
+    "block": 0,
+    "crit": 11903,
+    "dodge": 0,
+    "haste": 20800,
+    "item-level": 639,
+    "leech": 4577,
+    "mastery": 12090,
+    "parry": 11903,
+    "speed": 684,
+    "stamina": 516455,
+    "strength": 58991,
+    "versatility": 4085,
+  },
+}
+`;

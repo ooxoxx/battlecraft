@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  query characterRanking(\n    $id: Int = 12660\n    $className: String!\n    $specName: String!\n  ) {\n    worldData {\n      encounter(id: $id) {\n        name\n        characterRankings(\n          page: 1\n          className: $className\n          specName: $specName\n          metric: playerscore\n          leaderboard: LogsOnly\n        )\n      }\n    }\n  }\n": types.CharacterRankingDocument,
+    "\n  query ReportSummary($code: String!, $fight: Int!) {\n    reportData {\n      report(code: $code) {\n        code\n        table(fightIDs: [$fight], dataType: Summary)\n      }\n    }\n}": types.ReportSummaryDocument,
 };
 
 /**
@@ -35,6 +36,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query characterRanking(\n    $id: Int = 12660\n    $className: String!\n    $specName: String!\n  ) {\n    worldData {\n      encounter(id: $id) {\n        name\n        characterRankings(\n          page: 1\n          className: $className\n          specName: $specName\n          metric: playerscore\n          leaderboard: LogsOnly\n        )\n      }\n    }\n  }\n"): (typeof documents)["\n  query characterRanking(\n    $id: Int = 12660\n    $className: String!\n    $specName: String!\n  ) {\n    worldData {\n      encounter(id: $id) {\n        name\n        characterRankings(\n          page: 1\n          className: $className\n          specName: $specName\n          metric: playerscore\n          leaderboard: LogsOnly\n        )\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query ReportSummary($code: String!, $fight: Int!) {\n    reportData {\n      report(code: $code) {\n        code\n        table(fightIDs: [$fight], dataType: Summary)\n      }\n    }\n}"): (typeof documents)["\n  query ReportSummary($code: String!, $fight: Int!) {\n    reportData {\n      report(code: $code) {\n        code\n        table(fightIDs: [$fight], dataType: Summary)\n      }\n    }\n}"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

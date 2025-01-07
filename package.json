@@ -48,6 +48,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.12.4",
+    "@types/jsonpath-plus": "^5.0.5",
+    "jsonpath-plus": "^10.2.0",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7"
   }
