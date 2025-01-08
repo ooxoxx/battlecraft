@@ -28,5 +28,6 @@ const online = useOnline()
       </template>
     </ClientOnly>
     <InputEntry />
+    <TopStats />
   </div>
 </template>

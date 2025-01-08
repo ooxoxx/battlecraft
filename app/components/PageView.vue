@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const { data } = await useFetch('/api/characterRanking?className=Mage&specName=Frost')
+const { data } = await useFetch('/api/topstats', {
+  query: { className: 'Mage', specName: 'Frost', dungeon: 12660 },
+})
 </script>
 
 <template>
   <div text-gray:80>
-    data:
     <span text-gray>{{ data }}</span>
   </div>
 </template>

@@ -1,12 +1,12 @@
 export enum Dungeon {
-  AraKaraCityOfEchoes = 12660, // Ara-Kara, City of Echoes
-  CityOfThreads = 12669, // City of Threads
-  GrimBatol = 60670, // Grim Batol
-  MistsOfTirnaScithe = 62290, // Mists of Tirna Scithe
-  SiegeOfBoralus = 61822, // Siege of Boralus
-  TheDawnbreaker = 12662, // The Dawnbreaker
-  TheNecroticWake = 62286, // The Necrotic Wake
-  TheStonevault = 12652, // The Stonevault
+  AraKaraCityOfEchoes = '12660', // Ara-Kara, City of Echoes
+  CityOfThreads = '12669', // City of Threads
+  GrimBatol = '60670', // Grim Batol
+  MistsOfTirnaScithe = '62290', // Mists of Tirna Scithe
+  SiegeOfBoralus = '61822', // Siege of Boralus
+  TheDawnbreaker = '12662', // The Dawnbreaker
+  TheNecroticWake = '62286', // The Necrotic Wake
+  TheStonevault = '12652', // The Stonevault
 }
 
 export enum CharacterClass {

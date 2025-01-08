@@ -53,7 +53,7 @@ class ApolloClientSingleton {
   private static options: InMemoryCacheConfig = {
     typePolicies: {
       ReportData: {
-        keyFields: ['report', ['code']],
+        keyFields: ['report', ['code']], // use report code as the id of Query.ReportData. We only query by report code.
       },
       Report: {
         keyFields: ['code'],

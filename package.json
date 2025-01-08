@@ -51,6 +51,7 @@
     "@types/jsonpath-plus": "^5.0.5",
     "jsonpath-plus": "^10.2.0",
     "sequelize": "^6.37.5",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "zod": "^3.24.1"
   }
 }

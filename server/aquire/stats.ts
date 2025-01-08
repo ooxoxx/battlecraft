@@ -199,3 +199,7 @@ export async function topStatsBySpecDungeon({ className, specName, dungeon }: By
     }
   }))
 }
+
+export async function aquireTopStats() {
+
+}
