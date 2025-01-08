@@ -56,5 +56,7 @@ watch(selectedClass, (newClass) => {
       </select>
     </div>
   </div>
+
+  <div />
 </template>
 

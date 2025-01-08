@@ -1,6 +1,6 @@
 import type { InMemoryCacheConfig } from '@apollo/client/core'
 import process from 'node:process'
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core'
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core/index.js'
 import dotenv from 'dotenv'
 
 if (process.env.NODE_ENV !== 'production') {

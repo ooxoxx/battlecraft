@@ -10,7 +10,7 @@ const schema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  // console.log('/api/characterRanking entered')
+  console.log('/api/characterRanking entered')
   const res = await getValidatedQuery(event, q => schema.safeParse(q))
   if (!res.success) {
     console.error(res.error)
