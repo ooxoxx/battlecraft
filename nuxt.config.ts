@@ -49,6 +49,11 @@ export default defineNuxtConfig({
       host: '',
     },
   },
+  routeRules: {
+    '/': { prerender: true },
+    '/api/**': { cors: true },
+    '/build/**': { isr: 3600 },
+  },
 
   future: {
     compatibilityVersion: 4,

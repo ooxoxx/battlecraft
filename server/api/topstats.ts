@@ -4,13 +4,13 @@ import { topStatsBySpecDungeon } from '../aquire/stats'
 import { CharacterClass, Dungeon, Specialization } from '../types'
 
 const schema = z.object({
-  className: z.nativeEnum(CharacterClass),
-  specName: z.nativeEnum(Specialization),
-  dungeon: z.nativeEnum(Dungeon),
+  className: z.string(),
+  specName: z.string(),
+  dungeon: z.string(),
 })
 
 export default defineEventHandler(async (event) => {
-  console.log('/api/characterRanking entered')
+  // console.log('/api/topstats entered')
   const res = await getValidatedQuery(event, q => schema.safeParse(q))
   if (!res.success) {
     console.error(res.error)
@@ -21,10 +21,20 @@ export default defineEventHandler(async (event) => {
   }
 
   const { className, specName, dungeon } = res.data
+  const CharacterClassEnum = z.nativeEnum(CharacterClass)
+  const SpecializationEnum = z.nativeEnum(Specialization)
+  const DungeonEnum = z.nativeEnum(Dungeon)
 
-  return await topStatsBySpecDungeon({
-    specName,
-    className,
-    dungeon,
-  })
+  try {
+    const res = await topStatsBySpecDungeon({
+      specName: SpecializationEnum.parse(specName.replace(' ', '')),
+      className: CharacterClassEnum.parse(className.replace(' ', '')),
+      dungeon: DungeonEnum.parse(dungeon),
+    })
+    return res
+  }
+  catch (e) {
+    console.error(e)
+    throw e
+  }
 })

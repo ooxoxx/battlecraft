@@ -53,6 +53,7 @@ interface PlayerDetails {
   medal: string
   score: number
   leaderboard: number
+  hidden?: boolean
 }
 
 export async function rankingsBySpecDungeon({ className, specName, dungeon }: BySpecDungeonArgs): Promise<PlayerDetails[]> {
@@ -148,10 +149,10 @@ interface PlayerSummary {
   maxItemLevel: number
   potionUse: number
   healthstoneUse: number
-  combatantInfo: CombatantInfo // Nested combatant info
+  combatantInfo: CombatantInfo | [] // Nested combatant info
 }
 
-export async function statsByPlayerReport({ name, server, code, fight }: StatsByPlayerReportsArgs): Promise<TopStats> {
+export async function statsByPlayerReport({ name, server, code, fight }: StatsByPlayerReportsArgs): Promise<TopStats | undefined > {
   const client = await useClientWithEnv()
   const data = await client.query({ query: REPORT_SUMMARY, variables: { code, fight } })
 
@@ -164,12 +165,16 @@ export async function statsByPlayerReport({ name, server, code, fight }: StatsBy
     throw new Error('Player not found in report')
   }
 
+  if (Array.isArray(player.combatantInfo)) {
+    return
+  }
+
   // Extract keys and min values using JSONPath
   const keys = JSONPath<string[]>({ path: '$.*~', json: player.combatantInfo.stats }) // Extract keys
   const minValues = JSONPath<number[]>({ path: '$.*.min', json: player.combatantInfo.stats }) // Extract min values
 
   // Combine keys and values into a single object
-  const stats = keys.reduce((acc, key, index) => {
+  const stats = keys?.reduce((acc, key, index) => {
     key = key.toLowerCase().replace(' ', '-')
     // @ts-expect-error: acc maybe of any type
     acc[key] = minValues[index]
@@ -188,16 +193,19 @@ export async function statsByPlayerReport({ name, server, code, fight }: StatsBy
 export async function topStatsBySpecDungeon({ className, specName, dungeon }: BySpecDungeonArgs): Promise<TopStats[]> {
   const details = await rankingsBySpecDungeon({ className, specName, dungeon })
 
-  const top5Stats = details.slice(0, 5)
+  const top5Stats = details.slice(0, 7)
 
   // note that Promise.all preserve the order of its input array and output array
-  return Promise.all(top5Stats.map(async (ts, i) => {
-    const stats = await statsByPlayerReport({ name: ts.name, server: ts.server.name, code: ts.report.code, fight: ts.report.fightID })
+  return Promise.all(top5Stats.filter(ts => !ts.hidden).map(async (ts, i) => {
+    const stats = await statsByPlayerReport({ name: ts?.name, server: ts.server.name, code: ts.report.code, fight: ts.report.fightID })
+    if (stats === undefined) {
+      return
+    }
     return {
       ...stats,
       rank: i,
     }
-  }))
+  })).then(stats => stats.filter((s): s is TopStats => s !== undefined).slice(0, 5))
 }
 
 export async function aquireTopStats() {
