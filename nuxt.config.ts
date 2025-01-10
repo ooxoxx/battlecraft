@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 
@@ -5,7 +6,7 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',
-    '@pinia/nuxt',
+    // '@pinia/nuxt',
     '@nuxtjs/color-mode',
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
@@ -49,11 +50,11 @@ export default defineNuxtConfig({
       host: '',
     },
   },
-  routeRules: {
-    '/': { prerender: true },
-    '/api/**': { cors: true },
-    '/build/**': { isr: 3600 },
-  },
+  // routeRules: {
+  //   '/': { prerender: true },
+  //   '/api/**': { cors: true },
+  //   '/build/**': { prerender: true },
+  // },
 
   future: {
     compatibilityVersion: 4,
@@ -70,16 +71,23 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-08-14',
 
   nitro: {
-    // preset: 'netlify',
+    preset: 'static',
     esbuild: {
       options: {
         target: 'esnext',
       },
     },
     prerender: {
-      crawlLinks: false,
-      routes: ['/'],
-      ignore: ['/hi'],
+      crawlLinks: true,
+    },
+  },
+
+  apollo: {
+    clients: {
+      default: {
+        // httpEndpoint: process.env.NUXT_WCL_HOST || '',
+        httpEndpoint: 'https://beta.pokeapi.co/graphql/v1beta',
+      },
     },
   },
 
