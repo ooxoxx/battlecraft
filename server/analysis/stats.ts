@@ -1,7 +1,10 @@
-import type { CharacterClass, Dungeon, Specialization } from '../types'
+import type { CharacterClass, CharacterStats, Dungeon, Specialization } from '../types'
 import { JSONPath } from 'jsonpath-plus'
+import pLimit from 'p-limit'
+import { classesAndSpecs, dungeons, toCompact } from '../../app/constants'
 import { gql } from '../__generated__/gql'
 import { useClientWithEnv } from '../apollo-client'
+import { CharacterClassEnum, DungeonEnum, SpecializationEnum } from '../types'
 
 const CHARACTER_RANKING = gql(/* GraphQL */`
   query characterRanking(
@@ -25,9 +28,9 @@ const CHARACTER_RANKING = gql(/* GraphQL */`
 `)
 
 interface BySpecDungeonArgs {
-  className: CharacterClass
-  specName: Specialization
-  dungeon: Dungeon
+  className: string
+  specName: string
+  dungeon: string
 }
 
 interface PlayerDetails {
@@ -70,6 +73,10 @@ const REPORT_SUMMARY = gql(/* GraphQL */`
   query ReportSummary($code: String!, $fight: Int!) {
     reportData {
       report(code: $code) {
+        fights(fightIDs: [$fight]) {
+          id
+          encounterID
+        }
         code
         table(fightIDs: [$fight], dataType: Summary)
       }
@@ -83,30 +90,12 @@ interface StatsByPlayerReportsArgs {
   fight: number
 }
 
-export interface CharacterStats {
-  'strength'?: number
-  'agility'?: number
-  'intellect'?: number
-  'stamina': number
-  'leech': number
-  'armor': number
-  'mastery': number
-  'haste': number
-  'crit': number
-  'versatility': number
-  'item-level': number // note the quoted key for compatibility
-  'avoidance': number
-  'speed': number
-  'block': number
-  'parry': number
-  'dodge': number
-}
-
 interface TopStats {
   name: string
   rank: number
   class: CharacterClass
   spec: Specialization
+  dungeon: Dungeon
   stats: CharacterStats
 }
 
@@ -155,6 +144,8 @@ interface PlayerSummary {
 export async function statsByPlayerReport({ name, server, code, fight }: StatsByPlayerReportsArgs): Promise<TopStats | undefined > {
   const client = await useClientWithEnv()
   const data = await client.query({ query: REPORT_SUMMARY, variables: { code, fight } })
+  // console.log(data.data.reportData.report.code, data.data.reportData.report.fights[0].id)
+  // console.log(client.cache.identify(data.data.reportData))
 
   // find the player in report
   const players = data.data?.reportData?.report?.table.data.playerDetails as { tanks: PlayerSummary[], healers: PlayerSummary[], dps: PlayerSummary[] }
@@ -175,22 +166,28 @@ export async function statsByPlayerReport({ name, server, code, fight }: StatsBy
 
   // Combine keys and values into a single object
   const stats = keys?.reduce((acc, key, index) => {
-    key = key.toLowerCase().replace(' ', '-')
+    key = key.toLowerCase().replace(' ', '-') // handle 'item level'
     // @ts-expect-error: acc maybe of any type
     acc[key] = minValues[index]
     return acc
   }, {}) as CharacterStats
 
+  const encounterID = data.data?.reportData?.report?.fights?.at(0)?.encounterID
+
   return {
     name,
     class: player.type,
     spec: player.specs[0],
+    dungeon: DungeonEnum.parse(encounterID?.toString()),
     rank: -1,
     stats,
   }
 }
 
 export async function topStatsBySpecDungeon({ className, specName, dungeon }: BySpecDungeonArgs): Promise<TopStats[]> {
+  className = CharacterClassEnum.parse(toCompact(className))
+  specName = SpecializationEnum.parse(toCompact(specName))
+  dungeon = DungeonEnum.parse(dungeon)
   const details = await rankingsBySpecDungeon({ className, specName, dungeon })
 
   const top5Stats = details.slice(0, 7)
@@ -209,5 +206,27 @@ export async function topStatsBySpecDungeon({ className, specName, dungeon }: By
 }
 
 export async function aquireTopStats() {
-
+  const limit = pLimit(10)
+  await Promise.all(classesAndSpecs.map(({ name, specs }) => {
+    return specs.map((spec) => {
+      return dungeons.map(({ id }) => limit(async () => {
+        let counter = 0
+        while (counter < 3) {
+          try {
+            await topStatsBySpecDungeon({
+              className: name,
+              specName: spec,
+              dungeon: id,
+            })
+          }
+          catch (e) {
+            console.warn(`Failed to fetch topstats ${name} ${spec} ${id} remaining ${3 - counter} retries`)
+            console.warn(e)
+            counter++
+          }
+        }
+      }),
+      )
+    })
+  }).flat(3))
 }

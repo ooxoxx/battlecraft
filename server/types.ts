@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export enum Dungeon {
   AraKaraCityOfEchoes = '12660', // Ara-Kara, City of Echoes
   CityOfThreads = '12669', // City of Threads
@@ -62,3 +64,26 @@ export enum Specialization {
   Preservation = 'Preservation',
   Augmentation = 'Augmentation',
 }
+
+export interface CharacterStats {
+  'strength'?: number
+  'agility'?: number
+  'intellect'?: number
+  'stamina': number
+  'leech': number
+  'armor': number
+  'mastery': number
+  'haste': number
+  'crit': number
+  'versatility': number
+  'item-level': number // note the quoted key for compatibility
+  'avoidance': number
+  'speed': number
+  'block': number
+  'parry': number
+  'dodge': number
+}
+
+export const CharacterClassEnum = z.nativeEnum(CharacterClass)
+export const SpecializationEnum = z.nativeEnum(Specialization)
+export const DungeonEnum = z.nativeEnum(Dungeon)

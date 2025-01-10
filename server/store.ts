@@ -1,117 +1,155 @@
+// models/TopStats.ts
 import type { Optional } from 'sequelize'
+import type { CharacterClass, CharacterStats, Dungeon, Specialization } from './types'
 import { DataTypes, Model, Sequelize } from 'sequelize'
 
-// Define the attributes for the PopularStats model
-interface PopularStatsAttributes {
-  id: number
+// Define the attributes for the TopStats model
+interface TopStatsAttributes {
+  id?: number
   name: string
-  region: string
-  server: string
-  class: string // Use "className" if "class" causes a conflict
-  spec: string
-  primaryStat: string // Strength, Intellect, etc.
-  haste: number
-  crit: number
-  mastery: number
-  versatility: number
-  parry: number
-  block: number
+  rank: number
+  class: CharacterClass
+  spec: Specialization
+  dungeon: Dungeon
+  stats: CharacterStats
 }
 
-// Define attributes that are optional when creating a new instance
-type PopularStatsCreationAttributes = Optional<PopularStatsAttributes, 'id'>
+// Define the input attributes for creation
+interface TopStatsCreationAttributes extends Optional<TopStatsAttributes, 'id'> {}
 
-// Define the PopularStats model
-class PopularStats extends Model<PopularStatsAttributes, PopularStatsCreationAttributes> {
-  declare id: number
-  declare name: string
-  declare region: string
-  declare server: string
-  declare class: string
-  declare spec: string
-  declare primaryStat: string
-  declare haste: number
-  declare crit: number
-  declare mastery: number
-  declare versatility: number
-  declare parry: number
-  declare block: number
+// Define the Sequelize model
+export class TopStatsStore extends Model<TopStatsAttributes, TopStatsCreationAttributes> implements TopStatsAttributes {
+  public id!: number
+  public name!: string
+  public rank!: number
+  public class!: CharacterClass
+  public spec!: Specialization
+  public dungeon!: Dungeon
+  public stats!: CharacterStats
+
+  // Timestamps
+  public readonly createdAt!: Date
+  public readonly updatedAt!: Date
 }
 
-// Initialize Sequelize with SQLite
-const sequelize = new Sequelize({
+// Initialize the model
+function initTopStatsModel(sequelize: any) {
+  TopStatsStore.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      rank: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      class: {
+        type: DataTypes.ENUM(
+          'DeathKnight',
+          'Druid',
+          'Hunter',
+          'Mage',
+          'Monk',
+          'Paladin',
+          'Priest',
+          'Rogue',
+          'Shaman',
+          'Warlock',
+          'Warrior',
+          'DemonHunter',
+          'Evoker',
+        ),
+        allowNull: false,
+      },
+      spec: {
+        type: DataTypes.ENUM(
+          'Blood',
+          'Frost',
+          'Unholy',
+          'Balance',
+          'Feral',
+          'Guardian',
+          'Restoration',
+          'BeastMastery',
+          'Marksmanship',
+          'Survival',
+          'Arcane',
+          'Fire',
+          'Brewmaster',
+          'Mistweaver',
+          'Windwalker',
+          'Holy',
+          'Protection',
+          'Retribution',
+          'Discipline',
+          'Shadow',
+          'Assassination',
+          'Subtlety',
+          'Outlaw',
+          'Elemental',
+          'Enhancement',
+          'Affliction',
+          'Demonology',
+          'Destruction',
+          'Arms',
+          'Fury',
+          'Havoc',
+          'Vengeance',
+          'Devastation',
+          'Preservation',
+          'Augmentation',
+        ),
+        allowNull: false,
+      },
+      dungeon: {
+        type: DataTypes.ENUM(
+          '12660', // Ara-Kara, City of Echoes
+          '12669', // City of Threads
+          '60670', // Grim Batol
+          '62290', // Mists of Tirna Scithe
+          '61822', // Siege of Boralus
+          '12662', // The Dawnbreaker
+          '62286', // The Necrotic Wake
+          '12652', // The Stonevault
+        ),
+        allowNull: false,
+      },
+      stats: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      tableName: 'top_stats',
+      indexes: [
+        // Create a composite index for class, spec, and dungeon
+        {
+          name: 'class_spec_dungeon_index', // Name of the index
+          fields: ['class', 'spec', 'dungeon'], // Fields to include in the index
+          unique: false, // Set to true if the combination should be unique
+        },
+      ],
+    },
+  )
+}
+
+export const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: 'database.sqlite', // SQLite file location
+  storage: 'database.sqlite',
 })
 
-// Initialize the PopularStats model
-PopularStats.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    region: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    server: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    class: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    spec: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    primaryStat: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    haste: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    crit: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    mastery: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    versatility: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    parry: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    block: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize, // Pass the Sequelize instance
-    tableName: 'popular_stats', // Define the table name
-    timestamps: false, // Disable createdAt and updatedAt columns
-  },
-)
+// Initialize models
+initTopStatsModel(sequelize)
 
-// Sync the model with the database
-sequelize.sync({ alter: true }).then(() => {
-  console.log('PopularStats table has been created or updated.')
+// Sync models with the database
+sequelize.sync({ force: true }).then(() => {
+  console.log('Database synced')
 })
-
-export { PopularStats, sequelize }
 

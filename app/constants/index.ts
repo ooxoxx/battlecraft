@@ -1,6 +1,17 @@
 export const appName = 'Vitesse for Nuxt 3'
 export const appDescription = 'Vitesse for Nuxt 3'
 
+export const dungeons = [
+  { name: 'AraKaraCityOfEchoes', id: '12660' },
+  { name: 'CityOfThreads', id: '12669' },
+  { name: 'GrimBatol', id: '60670' },
+  { name: 'MistsOfTirnaScithe', id: '62290' },
+  { name: 'SiegeOfBoralus', id: '61822' },
+  { name: 'TheDawnbreaker', id: '12662' },
+  { name: 'TheNecroticWake', id: '62286' },
+  { name: 'TheStonevaul', id: '12652' },
+]
+
 export const classesAndSpecs = [
   {
     name: 'Death Knight',
@@ -55,6 +66,10 @@ export const classesAndSpecs = [
     specs: ['Devastation', 'Preservation', 'Augmentation'],
   },
 ]
+
+export function toCompact(str: string): string {
+  return str.replace(/ /g, '')
+}
 
 // WoW Class Colors
 export const classColors: Record<string, string> = {

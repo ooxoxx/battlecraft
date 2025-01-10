@@ -3,6 +3,7 @@
 exports[`finds stats by report 1`] = `
 {
   "class": "Paladin",
+  "dungeon": 12660,
   "name": "丶将息",
   "rank": -1,
   "spec": "Protection",

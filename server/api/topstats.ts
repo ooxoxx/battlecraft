@@ -1,7 +1,6 @@
 'use strict'
 import { z } from 'zod'
-import { topStatsBySpecDungeon } from '../aquire/stats'
-import { CharacterClass, Dungeon, Specialization } from '../types'
+import { topStatsBySpecDungeon } from '../analysis/stats'
 
 const schema = z.object({
   className: z.string(),
@@ -21,16 +20,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const { className, specName, dungeon } = res.data
-  const CharacterClassEnum = z.nativeEnum(CharacterClass)
-  const SpecializationEnum = z.nativeEnum(Specialization)
-  const DungeonEnum = z.nativeEnum(Dungeon)
 
   try {
     const res = await topStatsBySpecDungeon({
-      specName: SpecializationEnum.parse(specName.replace(' ', '')),
-      className: CharacterClassEnum.parse(className.replace(' ', '')),
-      dungeon: DungeonEnum.parse(dungeon),
+      specName,
+      className,
+      dungeon,
     })
+    // TopStatsStore.bulkCreate(res)
     return res
   }
   catch (e) {

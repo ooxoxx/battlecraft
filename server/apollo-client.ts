@@ -53,10 +53,25 @@ class ApolloClientSingleton {
   private static options: InMemoryCacheConfig = {
     typePolicies: {
       ReportData: {
-        keyFields: ['report', ['code']], // use report code as the id of Query.ReportData. We only query by report code.
+        keyFields: (obj, ctx) => {
+          if (ctx.typename !== 'ReportData')
+            return false
+          // @ts-expect-error: report.code is not in the type
+          const code = obj.report.code
+          // @ts-expect-error: report.fights is not in the type
+          const fight = obj.report.fights[0].id
+          return `${ctx.typename}:${code}-${fight}`
+        },
       },
       Report: {
-        keyFields: ['code'],
+        keyFields: (obj, ctx) => {
+          if (ctx.typename !== 'Report')
+            return false
+          const code = obj.code
+          // @ts-expect-error: fights is not in the type
+          const fight = obj.fights[0].id
+          return `${ctx.typename}:${code}-${fight}`
+        },
       },
     },
   }

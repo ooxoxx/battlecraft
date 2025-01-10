@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { classColors, classesAndSpecs } from '~/constants'
+import { classColors, classesAndSpecs, toCompact } from '~/constants'
 </script>
 
 <template>
@@ -28,7 +28,7 @@ import { classColors, classesAndSpecs } from '~/constants'
           <NuxtLink
             v-for="(spec, specIndex) in classData.specs"
             :key="specIndex"
-            :to="`/build/${classData.name.replace(' ', '')}-${spec.replace(' ', '')}`"
+            :to="`/build/${toCompact(classData.name)}-${toCompact(spec)}`"
             class="block rounded-lg bg-gray-300/50 p-2 text-center font-medium hover:bg-gray-400/50"
           >
             {{ spec }}
