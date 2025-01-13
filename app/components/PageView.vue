@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data } = await useFetch('/api/topstats', {
+const { data } = useFetch('/api/topstats', {
   query: { className: 'Mage', specName: 'Frost', dungeon: 12660 },
 })
 </script>

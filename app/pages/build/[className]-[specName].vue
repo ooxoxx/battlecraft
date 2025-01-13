@@ -1,15 +1,16 @@
 <script setup lang="ts">
-const route = useRoute()
-const className = 'className' in route.params && route.params.className
-const specName = 'specName' in route.params && route.params.specName
-const { data } = useFetch('/api/topstats', {
-  query: { className, specName, dungeon: 12660 },
-})
 </script>
 
 <template>
   <div>
-    <span>{{ data }}</span>
+    <Suspense>
+      <TopStats />
+      <template #fallback>
+        <div animate-pulse op50>
+          Loading...
+        </div>
+      </template>
+    </Suspense>
     <div>
       <NuxtLink
         class="m-3 text-sm btn"

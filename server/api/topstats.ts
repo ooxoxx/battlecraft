@@ -8,7 +8,7 @@ const schema = z.object({
   dungeon: z.string(),
 })
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   // console.log('/api/topstats entered')
   const res = await getValidatedQuery(event, q => schema.safeParse(q))
   if (!res.success) {
@@ -34,4 +34,15 @@ export default defineEventHandler(async (event) => {
     console.error(e)
     throw e
   }
+}, {
+  maxAge: 60 * 60,
+  getKey: async (event) => {
+    const res = await getValidatedQuery(event, q => schema.safeParse(q))
+    if (!res.success) {
+      console.error(res.error)
+      throw res.error
+    }
+    const { className, specName, dungeon } = res.data
+    return `topstats:${className}:${specName}:${dungeon}`
+  },
 })
