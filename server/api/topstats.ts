@@ -34,4 +34,8 @@ export default defineCachedEventHandler(async (event) => {
     console.error(e)
     throw e
   }
+}, {
+  name: 'api/topstats',
+  maxAge: 60 * 60,
+  staleMaxAge: -1,
 })

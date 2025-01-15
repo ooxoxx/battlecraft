@@ -52,7 +52,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },
     '/api/**': { cors: true },
-    '/build/**': { isr: 60 * 60 },
+    '/build/**': { isr: false },
   },
 
   future: {
