@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.12.5",
+    "@svgdotjs/svg.js": "^3.2.4",
     "@types/jsonpath-plus": "^5.0.5",
     "jsonpath-plus": "^10.2.0",
     "p-limit": "^6.2.0",

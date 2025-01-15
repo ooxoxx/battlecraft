@@ -90,7 +90,7 @@ interface StatsByPlayerReportsArgs {
   fight: number
 }
 
-interface TopStats {
+export interface TopStats {
   name: string
   rank: number
   class: CharacterClass
@@ -141,69 +141,87 @@ interface PlayerSummary {
   combatantInfo: CombatantInfo | [] // Nested combatant info
 }
 
-export async function statsByPlayerReport({ name, server, code, fight }: StatsByPlayerReportsArgs): Promise<TopStats | undefined > {
-  const client = await useClientWithEnv()
-  const data = await client.query({ query: REPORT_SUMMARY, variables: { code, fight } })
-  // console.log(data.data.reportData.report.code, data.data.reportData.report.fights[0].id)
-  // console.log(client.cache.identify(data.data.reportData))
+export const statsByPlayerReport = defineCachedFunction< Promise<TopStats | undefined>, [StatsByPlayerReportsArgs]>(
+  async ({ name, server, code, fight }) => {
+    const client = await useClientWithEnv()
+    const data = await client.query({ query: REPORT_SUMMARY, variables: { code, fight } })
+    // console.log(data.data.reportData.report.code, data.data.reportData.report.fights[0].id)
+    // console.log(client.cache.identify(data.data.reportData))
 
-  // find the player in report
-  const players = data.data?.reportData?.report?.table.data.playerDetails as { tanks: PlayerSummary[], healers: PlayerSummary[], dps: PlayerSummary[] }
-  server = server.replace(' ', '')
-  const player = [players.tanks, players.dps, players.healers].flat().find(p => p.name === name && p.server === server)
+    // find the player in report
+    const players = data.data?.reportData?.report?.table.data.playerDetails as { tanks: PlayerSummary[], healers: PlayerSummary[], dps: PlayerSummary[] }
+    server = server.replace(' ', '')
+    const player = [players.tanks, players.dps, players.healers].flat().find(p => p.name === name && p.server === server)
 
-  if (player === undefined) {
-    throw new Error('Player not found in report')
-  }
+    if (player === undefined) {
+      throw new Error('Player not found in report')
+    }
 
-  if (Array.isArray(player.combatantInfo)) {
-    return
-  }
-
-  // Extract keys and min values using JSONPath
-  const keys = JSONPath<string[]>({ path: '$.*~', json: player.combatantInfo.stats }) // Extract keys
-  const minValues = JSONPath<number[]>({ path: '$.*.min', json: player.combatantInfo.stats }) // Extract min values
-
-  // Combine keys and values into a single object
-  const stats = keys?.reduce((acc, key, index) => {
-    key = key.toLowerCase().replace(' ', '-') // handle 'item level'
-    // @ts-expect-error: acc maybe of any type
-    acc[key] = minValues[index]
-    return acc
-  }, {}) as CharacterStats
-
-  const encounterID = data.data?.reportData?.report?.fights?.at(0)?.encounterID
-
-  return {
-    name,
-    class: player.type,
-    spec: player.specs[0],
-    dungeon: DungeonEnum.parse(encounterID?.toString()),
-    rank: -1,
-    stats,
-  }
-}
-
-export async function topStatsBySpecDungeon({ className, specName, dungeon }: BySpecDungeonArgs): Promise<TopStats[]> {
-  className = CharacterClassEnum.parse(toCompact(className))
-  specName = SpecializationEnum.parse(toCompact(specName))
-  dungeon = DungeonEnum.parse(dungeon)
-  const details = await rankingsBySpecDungeon({ className, specName, dungeon })
-
-  const top5Stats = details.slice(0, 7)
-
-  // note that Promise.all preserve the order of its input array and output array
-  return Promise.all(top5Stats.filter(ts => !ts.hidden).map(async (ts, i) => {
-    const stats = await statsByPlayerReport({ name: ts?.name, server: ts.server.name, code: ts.report.code, fight: ts.report.fightID })
-    if (stats === undefined) {
+    if (Array.isArray(player.combatantInfo)) {
       return
     }
+
+    // Extract keys and min values using JSONPath
+    const keys = JSONPath<string[]>({ path: '$.*~', json: player.combatantInfo.stats }) // Extract keys
+    const minValues = JSONPath<number[]>({ path: '$.*.min', json: player.combatantInfo.stats }) // Extract min values
+
+    // Combine keys and values into a single object
+    const stats = keys?.reduce((acc, key, index) => {
+      key = key.toLowerCase().replace(' ', '-') // handle 'item level'
+      // @ts-expect-error: acc maybe of any type
+      acc[key] = minValues[index]
+      return acc
+    }, {}) as CharacterStats
+
+    const encounterID = data.data?.reportData?.report?.fights?.at(0)?.encounterID
+
     return {
-      ...stats,
-      rank: i,
+      name,
+      class: player.type,
+      spec: player.specs[0],
+      dungeon: DungeonEnum.parse(encounterID?.toString()),
+      rank: -1,
+      stats,
     }
-  })).then(stats => stats.filter((s): s is TopStats => s !== undefined).slice(0, 5))
-}
+  },
+  {
+    maxAge: 365 * 60 * 60 * 24,
+    staleMaxAge: -1,
+    name: 'statsByPlayerReport',
+    getKey: ({ name, server, code, fight }) => `${name}-${server}-${code}-${fight}`,
+  },
+)
+
+export const topStatsBySpecDungeon = defineCachedFunction<Promise<TopStats[]>, [BySpecDungeonArgs]>(
+  async ({ className, specName, dungeon }) => {
+    className = CharacterClassEnum.parse(toCompact(className))
+    specName = SpecializationEnum.parse(toCompact(specName))
+    dungeon = DungeonEnum.parse(dungeon)
+    const details = await rankingsBySpecDungeon({ className, specName, dungeon })
+
+    const top5Stats = details.slice(0, 7)
+
+    // note that Promise.all preserve the order of its input array and output array
+    return Promise.all(top5Stats.filter(ts => !ts.hidden).map(async (ts, i) => {
+      const stats = await statsByPlayerReport({ name: ts?.name, server: ts.server.name, code: ts.report.code, fight: ts.report.fightID })
+      if (stats === undefined) {
+        return
+      }
+      return {
+        ...stats,
+        rank: i,
+      }
+    })).then(stats => stats.filter((s): s is TopStats => s !== undefined).slice(0, 5))
+  },
+  {
+    name: 'topStatsBySpecDungeon',
+    maxAge: 60 * 60,
+    staleMaxAge: -1,
+    getKey: async ({ className, specName, dungeon }) => {
+      return `${className}-${specName}-${dungeon}`
+    },
+  },
+)
 
 export async function aquireTopStats() {
   const limit = pLimit(10)

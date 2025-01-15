@@ -8,5 +8,7 @@ const { data } = await useFetch('/api/topstats', {
 </script>
 
 <template>
-  <span>{{ data }}</span>
+  <div class="flex flex-wrap gap-1">
+    <TopStatsPanel v-for="d in data" :key="d.rank" :data="d" />
+  </div>
 </template>

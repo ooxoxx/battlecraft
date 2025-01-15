@@ -79,6 +79,12 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
     },
+    experimental: {
+      tasks: true,
+    },
+    scheduledTasks: {
+      '13 * * * *': ['aquire:topstats'],
+    },
   },
 
   eslint: {

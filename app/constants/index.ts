@@ -87,3 +87,14 @@ export const classColors: Record<string, string> = {
   'Demon Hunter': '#A330C9',
   'Evoker': '#33937F',
 }
+
+export const Dungeons = {
+  12660: 'Ara-Kara, City of Echoes', // Ara-Kara, City of Echoes
+  12669: 'City of Threads', // City of Threads
+  60670: 'Grim Batol', // Grim Batol
+  62290: 'Mists of Tirna Scithe', // Mists of Tirna Scithe
+  61822: 'Siege of Boralus', // Siege of Boralus
+  12662: 'The Dawnbreaker', // The Dawnbreaker
+  62286: 'The Necrotic Wake', // The Necrotic Wake
+  12652: 'The Stonevault', // The Stonevault
+} as const

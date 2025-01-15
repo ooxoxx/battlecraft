@@ -34,15 +34,4 @@ export default defineCachedEventHandler(async (event) => {
     console.error(e)
     throw e
   }
-}, {
-  maxAge: 60 * 60,
-  getKey: async (event) => {
-    const res = await getValidatedQuery(event, q => schema.safeParse(q))
-    if (!res.success) {
-      console.error(res.error)
-      throw res.error
-    }
-    const { className, specName, dungeon } = res.data
-    return `topstats:${className}:${specName}:${dungeon}`
-  },
 })
