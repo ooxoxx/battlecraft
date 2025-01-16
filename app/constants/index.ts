@@ -1,3 +1,5 @@
+import { warn } from 'node:console'
+
 export const appName = 'Vitesse for Nuxt 3'
 export const appDescription = 'Vitesse for Nuxt 3'
 
@@ -11,61 +13,125 @@ export const dungeons = [
   { name: 'TheNecroticWake', id: '62286' },
   { name: 'TheStonevaul', id: '12652' },
 ]
-
 export const classesAndSpecs = [
   {
     name: 'Death Knight',
-    specs: ['Blood', 'Frost', 'Unholy'],
+    compactName: 'DeathKnight',
+    specs: [
+      { name: 'Blood', compactName: 'Blood', role: 'tank', primaryStat: 'strength' },
+      { name: 'Frost', compactName: 'Frost', role: 'dps', primaryStat: 'strength' },
+      { name: 'Unholy', compactName: 'Unholy', role: 'dps', primaryStat: 'strength' },
+    ],
   },
   {
     name: 'Druid',
-    specs: ['Balance', 'Feral', 'Guardian', 'Restoration'],
+    compactName: 'Druid',
+    specs: [
+      { name: 'Balance', compactName: 'Balance', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Feral', compactName: 'Feral', role: 'dps', primaryStat: 'agility' },
+      { name: 'Guardian', compactName: 'Guardian', role: 'tank', primaryStat: 'agility' },
+      { name: 'Restoration', compactName: 'Restoration', role: 'healer', primaryStat: 'intellect' },
+    ],
   },
   {
     name: 'Hunter',
-    specs: ['Beast Mastery', 'Marksmanship', 'Survival'],
+    compactName: 'Hunter',
+    specs: [
+      { name: 'Beast Mastery', compactName: 'BeastMastery', role: 'dps', primaryStat: 'agility' },
+      { name: 'Marksmanship', compactName: 'Marksmanship', role: 'dps', primaryStat: 'agility' },
+      { name: 'Survival', compactName: 'Survival', role: 'dps', primaryStat: 'agility' },
+    ],
   },
   {
     name: 'Mage',
-    specs: ['Arcane', 'Fire', 'Frost'],
+    compactName: 'Mage',
+    specs: [
+      { name: 'Arcane', compactName: 'Arcane', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Fire', compactName: 'Fire', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Frost', compactName: 'Frost', role: 'dps', primaryStat: 'intellect' },
+    ],
   },
   {
     name: 'Monk',
-    specs: ['Brewmaster', 'Mistweaver', 'Windwalker'],
+    compactName: 'Monk',
+    specs: [
+      { name: 'Brewmaster', compactName: 'Brewmaster', role: 'tank', primaryStat: 'agility' },
+      { name: 'Mistweaver', compactName: 'Mistweaver', role: 'healer', primaryStat: 'intellect' },
+      { name: 'Windwalker', compactName: 'Windwalker', role: 'dps', primaryStat: 'agility' },
+    ],
   },
   {
     name: 'Paladin',
-    specs: ['Holy', 'Protection', 'Retribution'],
+    compactName: 'Paladin',
+    specs: [
+      { name: 'Holy', compactName: 'Holy', role: 'healer', primaryStat: 'intellect' },
+      { name: 'Protection', compactName: 'Protection', role: 'tank', primaryStat: 'strength' },
+      { name: 'Retribution', compactName: 'Retribution', role: 'dps', primaryStat: 'strength' },
+    ],
   },
   {
     name: 'Priest',
-    specs: ['Discipline', 'Holy', 'Shadow'],
+    compactName: 'Priest',
+    specs: [
+      { name: 'Discipline', compactName: 'Discipline', role: 'healer', primaryStat: 'intellect' },
+      { name: 'Holy', compactName: 'Holy', role: 'healer', primaryStat: 'intellect' },
+      { name: 'Shadow', compactName: 'Shadow', role: 'dps', primaryStat: 'intellect' },
+    ],
   },
   {
     name: 'Rogue',
-    specs: ['Assassination', 'Outlaw', 'Subtlety'],
+    compactName: 'Rogue',
+    specs: [
+      { name: 'Assassination', compactName: 'Assassination', role: 'dps', primaryStat: 'agility' },
+      { name: 'Outlaw', compactName: 'Outlaw', role: 'dps', primaryStat: 'agility' },
+      { name: 'Subtlety', compactName: 'Subtlety', role: 'dps', primaryStat: 'agility' },
+    ],
   },
   {
     name: 'Shaman',
-    specs: ['Elemental', 'Enhancement', 'Restoration'],
+    compactName: 'Shaman',
+    specs: [
+      { name: 'Elemental', compactName: 'Elemental', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Enhancement', compactName: 'Enhancement', role: 'dps', primaryStat: 'agility' },
+      { name: 'Restoration', compactName: 'Restoration', role: 'healer', primaryStat: 'intellect' },
+    ],
   },
   {
     name: 'Warlock',
-    specs: ['Affliction', 'Demonology', 'Destruction'],
+    compactName: 'Warlock',
+    specs: [
+      { name: 'Affliction', compactName: 'Affliction', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Demonology', compactName: 'Demonology', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Destruction', compactName: 'Destruction', role: 'dps', primaryStat: 'intellect' },
+    ],
   },
   {
     name: 'Warrior',
-    specs: ['Arms', 'Fury', 'Protection'],
+    compactName: 'Warrior',
+    specs: [
+      { name: 'Arms', compactName: 'Arms', role: 'dps', primaryStat: 'strength' },
+      { name: 'Fury', compactName: 'Fury', role: 'dps', primaryStat: 'strength' },
+      { name: 'Protection', compactName: 'Protection', role: 'tank', primaryStat: 'strength' },
+    ],
   },
   {
     name: 'Demon Hunter',
-    specs: ['Havoc', 'Vengeance'],
+    compactName: 'DemonHunter',
+    specs: [
+      { name: 'Havoc', compactName: 'Havoc', role: 'dps', primaryStat: 'agility' },
+      { name: 'Vengeance', compactName: 'Vengeance', role: 'tank', primaryStat: 'agility' },
+    ],
   },
   {
     name: 'Evoker',
-    specs: ['Devastation', 'Preservation', 'Augmentation'],
+    compactName: 'Evoker',
+    specs: [
+      { name: 'Devastation', compactName: 'Devastation', role: 'dps', primaryStat: 'intellect' },
+      { name: 'Preservation', compactName: 'Preservation', role: 'healer', primaryStat: 'intellect' },
+      { name: 'Augmentation', compactName: 'Augmentation', role: 'dps', primaryStat: 'intellect' },
+    ],
   },
-]
+] as const
 
 export function toCompact(str: string): string {
   return str.replace(/ /g, '')

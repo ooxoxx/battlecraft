@@ -2,7 +2,8 @@
 import type { Gradient } from '@svgdotjs/svg.js'
 import type { TopStats } from '~~/server/analysis/stats'
 import { Number, SVG } from '@svgdotjs/svg.js'
-import { Dungeons } from '~/constants'
+import { capitalize } from 'vue'
+import { classesAndSpecs, Dungeons } from '~/constants'
 
 const { data } = defineProps<{
   data: TopStats
@@ -17,11 +18,15 @@ onMounted(() => {
 })
 
 function drawChart(data: TopStats, ref: HTMLElement) {
+  const spec = classesAndSpecs.find(c => c.compactName === data.class)?.specs.find(s => s.compactName === data.spec)
+  if (!spec)
+    throw createError('Spec not found')
+
   const draw = SVG().addTo(ref).size('100%', '100%')
   draw.text((add) => {
     add.tspan(data.name)
     add.tspan(`Item Level: ${data.stats['item-level']}`).dx(20)
-    add.tspan(`Strength: ${data.stats.strength}`).dx(20)
+    add.tspan(`${capitalize(spec.primaryStat)}: ${data.stats[spec.primaryStat]}`).dx(20)
     const enumName = Dungeons[data.dungeon]
     add.tspan(`Dungeon: ${enumName}`).newLine()
   }).fill('#666').font({ weight: 'bold' }).move(0, 0)

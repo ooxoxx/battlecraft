@@ -35,10 +35,10 @@ import { classColors, classesAndSpecs, toCompact } from '~/constants'
           <NuxtLink
             v-for="(spec, specIndex) in classData.specs"
             :key="specIndex"
-            :to="`/build/${toCompact(classData.name)}-${toCompact(spec)}`"
+            :to="`/build/${classData.compactName}/${spec.compactName}`"
             class="block border border-gray-200 rounded-lg bg-transparent p-2 text-center font-medium hover:bg-gray-400/50"
           >
-            {{ spec }}
+            {{ spec.name }}
           </NuxtLink>
         </div>
       </div>

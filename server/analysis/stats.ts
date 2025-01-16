@@ -233,7 +233,7 @@ export async function aquireTopStats() {
           try {
             await topStatsBySpecDungeon({
               className: name,
-              specName: spec,
+              specName: spec.name,
               dungeon: id,
             })
           }
