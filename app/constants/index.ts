@@ -1,7 +1,5 @@
-import { warn } from 'node:console'
-
-export const appName = 'Vitesse for Nuxt 3'
-export const appDescription = 'Vitesse for Nuxt 3'
+export const appName = 'BattleCraft'
+export const appDescription = 'Data-driven class guides for World of Warcraft.'
 
 export const dungeons = [
   { name: 'AraKaraCityOfEchoes', id: '12660' },
