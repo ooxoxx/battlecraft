@@ -224,27 +224,33 @@ export const topStatsBySpecDungeon = defineCachedFunction<Promise<TopStats[]>, [
 )
 
 export async function aquireTopStats() {
+  console.log('aquire entered')
   const limit = pLimit(10)
-  await Promise.all(classesAndSpecs.map(({ name, specs }) => {
-    return specs.map((spec) => {
-      return dungeons.map(({ id }) => limit(async () => {
-        let counter = 0
-        while (counter < 3) {
-          try {
-            await topStatsBySpecDungeon({
-              className: name,
-              specName: spec.name,
-              dungeon: id,
-            })
+  await Promise.all(classesAndSpecs.map(
+    ({ name, specs }) => specs.map(
+      spec => dungeons.map(
+        ({ id: dungID }) => limit(async () => {
+          let counter = 0
+          while (counter < 3) {
+            try {
+              console.log(`aquiring topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
+              await topStatsBySpecDungeon({
+                className: name,
+                specName: spec.name,
+                dungeon: dungID,
+              })
+            }
+            catch (e) {
+              console.warn(`Failed to fetch topstats ${name} ${spec} ${dungID} remaining ${3 - counter} retries`)
+              console.warn(e)
+              counter++
+              continue
+            }
+            console.log(`aquirie done topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
+            break
           }
-          catch (e) {
-            console.warn(`Failed to fetch topstats ${name} ${spec} ${id} remaining ${3 - counter} retries`)
-            console.warn(e)
-            counter++
-          }
-        }
-      }),
-      )
-    })
-  }).flat(3))
+        }),
+      ),
+    ),
+  ).flat(3))
 }

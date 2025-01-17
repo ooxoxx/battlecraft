@@ -83,7 +83,7 @@ export default defineNuxtConfig({
       tasks: true,
     },
     scheduledTasks: {
-      '13 * * * *': ['aquire:topstats'],
+      '0 * * * *': ['aquire:topstats'],
     },
   },
 
