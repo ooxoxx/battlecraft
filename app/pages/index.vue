@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { classColors, classesAndSpecs, toCompact } from '~/constants'
+import { classColors, classesAndSpecs } from '~/constants'
 </script>
 
 <template>

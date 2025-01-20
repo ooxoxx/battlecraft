@@ -2,6 +2,7 @@
 const route = useRoute()
 const className = 'className' in route.params && route.params.className
 const specName = 'specName' in route.params && route.params.specName
+console.log(route.params)
 const { data } = await useFetch('/api/topstats', {
   query: { className, specName, dungeon: 12660 },
 })
