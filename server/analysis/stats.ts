@@ -224,7 +224,7 @@ export const topStatsBySpecDungeon = defineCachedFunction<Promise<TopStats[]>, [
 )
 
 export async function aquireTopStats() {
-  console.log('aquire entered')
+  // console.log('aquire entered')
   const limit = pLimit(10)
   await Promise.all(classesAndSpecs.map(
     ({ name, specs }) => specs.map(
@@ -233,7 +233,7 @@ export async function aquireTopStats() {
           let counter = 0
           while (counter < 3) {
             try {
-              console.log(`aquiring topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
+              // console.log(`aquiring topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
               await topStatsBySpecDungeon({
                 className: name,
                 specName: spec.name,
@@ -246,7 +246,7 @@ export async function aquireTopStats() {
               counter++
               continue
             }
-            console.log(`aquirie done topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
+            // console.log(`aquirie done topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
             break
           }
         }),
