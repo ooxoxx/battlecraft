@@ -150,6 +150,5 @@ initTopStatsModel(sequelize)
 
 // Sync models with the database
 sequelize.sync({ force: true }).then(() => {
-  console.log('Database synced')
+  // console.log('Database synced')
 })
-
