@@ -5,9 +5,6 @@ command = "pnpm run build"
 [build.environment]
 NODE_VERSION = "22"
 
-[functions."aquire-topstats"]
-schedule = "@hourly"
-
 # [[redirects]]
 # from = "/*"
 # to = "/index.html"

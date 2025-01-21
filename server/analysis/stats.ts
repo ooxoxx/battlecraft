@@ -233,7 +233,7 @@ export async function aquireTopStats() {
           let counter = 0
           while (counter < 3) {
             try {
-              // console.log(`aquiring topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
+              console.log(`aquiring topstats of class: ${name}, spec: ${spec.name}, dungeon: ${dungID}`)
               await topStatsBySpecDungeon({
                 className: name,
                 specName: spec.name,
@@ -241,8 +241,8 @@ export async function aquireTopStats() {
               })
             }
             catch (e) {
-              console.warn(`Failed to fetch topstats ${name} ${spec} ${dungID} remaining ${3 - counter} retries`)
-              console.warn(e)
+              console.error(`Failed to fetch topstats ${name} ${spec} ${dungID} remaining ${3 - counter} retries`)
+              console.error(e)
               counter++
               continue
             }
